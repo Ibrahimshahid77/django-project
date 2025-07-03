@@ -14,13 +14,11 @@ def signup(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        context = {}
+        context = {} 
         try:
             validate_email(email)
         except ValidationError:
-            context['error'] = 'Invalid email'
-            return render(request, 'index.html', context)
-    
+            context['error'] = 'Invalid email'    
         
         if User.objects.filter(username=username).exists():
             context['error'] = 'Username used'
@@ -57,15 +55,21 @@ def home(request):
 def contact(request):
     return render(request, 'contact.html')
 
-
 @login_required
 def add_profile(request):
     if request.method == 'POST':
+        if Profile.objects.filter(user=request.user).exists():
+            return redirect('view_profile')
         profile, created = Profile.objects.get_or_create(user=request.user)
         profile.skills = request.POST.get('skills')
         profile.about = request.POST.get('about')
         profile.save()
+        return redirect('view_profile')
+    return render(request, 'profile.html')
 
+def add_project(request):
+    if request.method == 'POST':
+        profile = Profile.objects.get(user=request.user)
         names = request.POST.getlist('project_name')
         urls = request.POST.getlist('project_url')
         des = request.POST.getlist('project_des')
@@ -74,17 +78,31 @@ def add_profile(request):
 
         for i in range(len(names)):
             Project.objects.create(
-            profile=profile,
-            name=names[i],
-            url=urls[i],
-            description=des[i],
-            stack=stacks[i],
-            photo=photos[i])
+                profile=profile,
+                name=names[i],
+                url=urls[i],
+                description=des[i],
+                stack=stacks[i],
+                photo=photos[i])
+       
+        return redirect('view_profile')
+    return render(request, 'profile.html') 
 
-        return redirect('/home/')
+@login_required
+def view_profile(request):
+    try:
+        profile = Profile.objects.get(user=request.user)
+        projects = Project.objects.filter(profile=profile)
+    except Profile.DoesNotExist:
+        return redirect('add_profile')
+    return render(request, 'view_profile.html', {
+        'profile': profile,
+        'projects': projects
+    }) 
 
-    return render(request, 'profile.html')
 
+         
+ 
 
 
 

@@ -1,5 +1,3 @@
-<h1 style="color: green;">Huah ✅</h1>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,6 +15,9 @@
   </style>
 </head>
 <body class="bg-light">
+  <div id="success-alert" class="alert alert-success d-none" role="alert">
+  Project saved successfully
+</div>
 
 <div class="container mt-5">
   <div class="card shadow-lg p-4">
@@ -37,60 +38,110 @@
 
       <div class="mb-3">
         <label class="form-label">Skills</label>
-        <input type="text" name="skills" class="form-control" >
+        <input type="text" name="skills" class="form-control">
       </div>
 
       <div class="mb-3">
         <label class="form-label">About</label>
         <textarea name="about" class="form-control" rows="4"></textarea>
       </div>
-
-   
       <h4 class="mt-4">Projects</h4>
       <div id="project-fields"></div>
-      <button type="button" class="btn btn-outline-secondary mb-3" onclick="addProject()"> Add Project</button>
+      
+      <button type="button" class="btn btn-outline-secondary mb-3" data-bs-toggle="modal" data-bs-target="#projectModal">Add Project</button>
 
       <div class="d-flex justify-content-between">
-       
         <button type="submit" class="btn btn-primary">Save Profile</button>
       </div>
-    </form>
+   </form>
   </div>
 </div>
 
-<script>
-function addProject() {
-  const container = document.getElementById('project-fields');
-  container.insertAdjacentHTML('beforeend', `
-    <div class="project-block">
-      <div class="mb-3">
-        <label class="form-label">Project Name</label>
-        <input type="text" name="project_name" class="form-control" required>
-      </div>
+<div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'add_project' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="projectModalLabel">Add Project</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
 
-      <div class="mb-3">
-        <label class="form-label">Project URL</label>
-        <input type="url" name="project_url" class="form-control">
-      </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" name="project_name" class="form-control" required>
+          </div>
 
-      <div class="mb-3">
-        <label class="form-label">Description</label>
-        <textarea name="project_des" class="form-control" rows="2" required></textarea>
-      </div>
+          <div class="mb-3">
+            <label class="form-label">URL</label>
+            <input type="url" name="project_url" class="form-control">
+          </div>
 
-      <div class="mb-3">
-        <label class="form-label">Stack</label>
-        <input type="text" name="project_stack" class="form-control">
-      </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="project_des" class="form-control" rows="2" required></textarea>
+          </div>
 
-      <div class="mb-3">
-        <label class="form-label">Project Photo</label>
-        <input type="file" name="project_photo" class="form-control">
-      </div>
+          <div class="mb-3">
+            <label class="form-label">Stack</label>
+            <input type="text" name="project_stack" class="form-control">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Photo</label>
+            <input type="file" name="project_photo" class="form-control">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success">Save Project</button> </div>
+    </form>
     </div>
-  `);
-}
+  </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const projectForm = document.querySelector('#projectModal form');
+
+  projectForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(projectForm);
+
+    fetch("{% url 'add_project' %}", {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+      },
+    })
+    .then(response => {
+      if (!response.ok) throw new Error('Failed to save project');
+      return response.text();
+    })
+    .then(data => {
+      const modal = bootstrap.Modal.getInstance(document.getElementById('projectModal'));
+      modal.hide();
+
+      const successAlert = document.getElementById('success-alert');
+      successAlert.classList.remove('d-none');
+
+      setTimeout(() => {
+        successAlert.classList.add('d-none');
+      }, 3000);
+
+      projectForm.reset();
+    })
+    .catch(error => {
+      alert("Something went wrong: " + error.message);
+    });
+  });
+});
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
