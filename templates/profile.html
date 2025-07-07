@@ -5,6 +5,7 @@
   <title>Create Profile</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
+     body {background-color: rgb(135, 145, 123);}
     .project-block {
       border: 1px solid #ccc;
       padding: 15px;
@@ -14,23 +15,24 @@
     }
   </style>
 </head>
-<body class="bg-light">
+<body>
   <div id="success-alert" class="alert alert-success d-none" role="alert">
-  Project saved successfully
-</div>
+  Project saved</div>
 
 <div class="container mt-5">
+<style>
+    .card {background-color: #5c726c; border-radius: 5px;}
+</style>
   <div class="card shadow-lg p-4">
     <h2 class="mb-4 text-center">Create your profile</h2>
 
+  
     <form method="POST" enctype="multipart/form-data">
       {% csrf_token %}
-
       <div class="mb-3">
         <label class="form-label">Name</label>
         <input type="text" class="form-control" value="{{ request.user.username }}" disabled>
       </div>
-
       <div class="mb-3">
         <label class="form-label">Email</label>
         <input type="email" class="form-control" value="{{ request.user.email }}" disabled>
@@ -48,10 +50,10 @@
       <h4 class="mt-4">Projects</h4>
       <div id="project-fields"></div>
       
-      <button type="button" class="btn btn-outline-secondary mb-3" data-bs-toggle="modal" data-bs-target="#projectModal">Add Project</button>
+      <button type="button" class="btn btn-secondary mb-3" data-bs-toggle="modal" data-bs-target="#projectModal">Add Project</button>
 
       <div class="d-flex justify-content-between">
-        <button type="submit" class="btn btn-primary">Save Profile</button>
+        <button type="submit" class="btn btn-primary btn-lg">Save Profile</button>
       </div>
    </form>
   </div>
@@ -72,7 +74,6 @@
             <label class="form-label">Name</label>
             <input type="text" name="project_name" class="form-control" required>
           </div>
-
           <div class="mb-3">
             <label class="form-label">URL</label>
             <input type="url" name="project_url" class="form-control">
@@ -107,7 +108,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
   projectForm.addEventListener('submit', function (e) {
     e.preventDefault();
-
     const formData = new FormData(projectForm);
 
     fetch("{% url 'add_project' %}", {
@@ -144,4 +144,5 @@ document.addEventListener('DOMContentLoaded', function () {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
 

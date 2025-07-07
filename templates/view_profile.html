@@ -8,36 +8,39 @@
 <body class="bg-light">
 
 <div class="container mt-5">
-    <div class="card p-4 shadow">
-        <h2 class="mb-3">Profile of {{ request.user.username }}</h2>
-
+    <div class="card p-4 shadow border-3">
+        <div class="d-flex align-items-center mb-3">
+  <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3"
+       style="width: 50px; height: 50px; font-size: 30px;">
+    {{ request.user.username|first|upper }}
+  </div>
+  <h2>{{ request.user.username }}</h2>
+</div>
         <p><strong>Email:</strong> {{ request.user.email }}</p>
-        <p><strong>Skills:</strong> {{ profile.skills }}</p>
+        <p><strong>Skills:</strong> {{ user.profile.skills }}</p>
         <p><strong>About:</strong> {{ profile.about }}</p>
-
         <hr>
-
-        <h4 class="mb-3">Projects</h4>
+        <hr>
+        <h4 class="mb-3 ">Projects</h4>
         {% for project in projects %}
-            <div class="mb-4 p-3 border rounded">
-                <h5>{{ project.name }}</h5>
+        <div class="card mb-4 border-3 shadow" style="background-color: #ffffff;">
+            <div class="card-header bg-primary text-white">
+             <h5 class="mb-0">{{ project.name }}</h5>
+            </div>
+            <div class="card-body text-dark">
                 {% if project.url %}
-                    <p><a href="{{ project.url }}" target="_blank">Project Link</a></p>
+                <p><a href="{{ project.url }}" target="_blank" class="text-dark">Project Link</a></p>
                 {% endif %}
                 <p><strong>Description:</strong> {{ project.description }}</p>
                 <p><strong>Stack:</strong> {{ project.stack }}</p>
                 {% if project.photo %}
-                    <img src="{{ project.photo.url }}" alt="Project Photo" class="img-fluid" style="max-width: 300px;">
+                <img src="{{ project.photo.url }}" alt="Project Photo" class="img-fluid" style="max-width: 300px;">
                 {% endif %}
             </div>
-        {% empty %}
-            <p>No projects.</p>
-        {% endfor %}
-
-        <a href="{% url 'add_profile' %}" class="btn btn-primary mt-3">Edit </a>
-    </div>
+        </div>
+    {% empty %}
+        <p>No projects.</p>
+    {% endfor %}
 </div>
-
 </body>
 </html>
-

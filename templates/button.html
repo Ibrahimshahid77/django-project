@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head> 
+       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <button class="btn btn-primary btn-lg" id="mybutton">Button</button>
+    <p id="message"></p>
+<script>
+  let button = document.getElementById("mybutton"); 
+  let message = document.getElementById("message"); 
+  button.onclick = function() {message.innerText = "hello you clicked the button"; }
+  setTimeout(function() { message.innerText = ""}, 3275); 
+  </script>
+</body>
+  </html>

@@ -10,5 +10,10 @@ urlpatterns = [
     path('contact/', views.contact, name = 'contact'), 
     path('addprof/', views.add_profile, name='add_profile'),
     path('addproj/', views.add_project, name='add_project' ),
-    path('viewprof/', views.view_profile, name='view_profile')
+    path('viewprof/', views.view_profile, name='view_profile'),
+    path('button/', views.button, name='button'),
+    path('guest/', views.guest, name ='guestpage'),
+    path('manager/', views.manager_view, name='manager_view'),
+    path('delete/<int:user_id>/', views.delete_user, name='delete_user'),
+
 ]

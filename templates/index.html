@@ -5,42 +5,51 @@
   <title>Signup Form</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {background-color: rgb(135, 145, 123);}
+    .form-container {max-width: 500px;}
+  </style>
 </head>
 <body>
-  <body style="background-color: rgb(119, 140, 94)"></body>
-
-  <div class="container mt-5">
+    <div class="container mt-5 form-container">
     <h2 class="mb-4">Signup</h2>
     
     <form method="POST" action="/signup/">
       {% csrf_token %}
+     
       <div class="mb-3">
         <label for="signupEmail" class="form-label">Email address</label>
-        <input type="email" class="form-control " id="signupEmail" name="email" required>
+        <input type="email" class="form-control" id="signupEmail" name="email" required>
       </div>
+      
       <div class="mb-3">
-        <label for="signupUsername" class="form-label bg-dark text-white"></label>Username</label>
-        <input type="text" class="form-control " id="signupUsername" name="username" required>
+        <label for="signupUsername" class="form-label">Username</label>
+        <input type="text" class="form-control" id="signupUsername" name="username" required>
       </div>
+      
       <div class="mb-3">
         <label for="signupPassword" class="form-label">Password</label>
         <input type="password" class="form-control" id="signupPassword" name="password" required>
       </div>
-    {% if error %}
-  <div style="color:red;">{{ error }}</div>
-{% endif %}
 
-      <button type="submit" class="btn btn-primary">SIGN UP</button>
+      {% if error %}
+        <div style="color:red;">{{ error }}</div>
+      {% endif %}
+
+      <button type="submit" class="btn btn-primary me-3">SIGN UP</button>
+      <a href="{% url 'login' %}" class="btn btn-danger">Already have an account</a>
     </form>
+
+    <a href="{% url 'guestpage' %}" class="btn btn-secondary  mt-3 me-3"> View as Guest</a>
+    <a href="{% url 'manager_view' %}" class="btn btn-danger mt-3">Manager</a>
+
+
   </div>
-    </div>
-      <a href="{% url 'login' %}" class="btn btn-danger mt-3">Already have an account</a>
-</div>
-  
+
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
 
 
 

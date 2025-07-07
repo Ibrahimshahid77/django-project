@@ -1,38 +1,33 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.http import HttpResponse
 from myapp.models import User, Profile, Project
 from django.contrib.auth import authenticate, login as auth_login,logout
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-
 def signup(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
         password = request.POST.get('password')
-
-        context = {} 
+        
         try:
             validate_email(email)
         except ValidationError:
-            context['error'] = 'Invalid email'    
-        
+            return render(request, 'index.html', {'error': 'Email invalid'})   
         if User.objects.filter(username=username).exists():
-            context['error'] = 'Username used'
-            return render(request, 'index.html', context)
+            return render(request, 'index.html', {'error': 'Username used'})
         if User.objects.filter(email=email).exists():
-            context['error'] = 'Email used'
-            return render(request, 'index.html', context)   
-        
+            return render(request, 'index.html', {'error': 'Email used'})   
         User.objects.create_user(username=username, email=email, password=password)
         return redirect('/login/') 
     return render(request, 'index.html')
 
 def login_view(request):
-    context = {}
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -42,8 +37,7 @@ def login_view(request):
             print("Loggin")
             return redirect('/home/')
         else:
-            context['error']= 'Wrong username or password'
-            return render(request, 'login.html',context)
+            return render(request, 'login.html',{'error': 'Wrong username or password'})
     return render(request, 'login.html')
 def logout_view(request):
     logout(request)
@@ -54,6 +48,8 @@ def home(request):
 
 def contact(request):
     return render(request, 'contact.html')
+def button(request):
+    return render(request, 'button.html')
 
 @login_required
 def add_profile(request):
@@ -97,8 +93,25 @@ def view_profile(request):
         return redirect('add_profile')
     return render(request, 'view_profile.html', {
         'profile': profile,
-        'projects': projects
-    }) 
+        'projects': projects}) 
+def guest(request):
+    users_with_profiles = User.objects.filter(profile__isnull=False)
+    users_without_profiles = User.objects.filter(profile__isnull=True)
+    users = list(users_with_profiles) + list(users_without_profiles)
+    return render(request, 'guest.html', {'users': users})
+
+def manager_view(request):
+    if not request.user.is_superuser:
+        return HttpResponse("You are not the manager")
+    users_with_profiles = User.objects.filter(profile__isnull=False)
+    users_without_profiles = User.objects.filter(profile__isnull=True)
+    users = list(users_with_profiles) + list(users_without_profiles)
+    return render(request, 'manager.html', {'users': users})
+
+def delete_user(request, user_id):
+    User.objects.get(id=user_id).delete()
+    return redirect('manager_view')
+
 
 
          
