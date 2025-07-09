@@ -1,6 +1,5 @@
 from django.urls import path
 from . import views
-
 urlpatterns = [
     path('', views.signup, name='signup'),
     path('signup/', views.signup, name='signup_post'),  
@@ -15,5 +14,6 @@ urlpatterns = [
     path('guest/', views.guest, name ='guestpage'),
     path('manager/', views.manager_view, name='manager_view'),
     path('delete/<int:user_id>/', views.delete_user, name='delete_user'),
-
+    path('profile/<int:user_id>/', views.profile_detail, name='profile_detail'),
+    path('password/', views.change_password, name = 'change_pass')
 ]

@@ -8,6 +8,9 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+
 def signup(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -22,9 +25,12 @@ def signup(request):
             return render(request, 'index.html', {'error': 'Username used'})
         if User.objects.filter(email=email).exists():
             return render(request, 'index.html', {'error': 'Email used'})   
+        if len(username) < 5:
+            messages.error(request, "Username must be at least 5 characters long.")
+            return redirect('signup')
         User.objects.create_user(username=username, email=email, password=password)
         return redirect('/login/') 
-    return render(request, 'index.html')
+    return render(request, 'index.html') 
 
 def login_view(request):
 
@@ -34,7 +40,6 @@ def login_view(request):
         user = authenticate(username=username, password=password)
         if user:
             auth_login(request, user)
-            print("Loggin")
             return redirect('/home/')
         else:
             return render(request, 'login.html',{'error': 'Wrong username or password'})
@@ -44,7 +49,8 @@ def logout_view(request):
     return redirect('/login/')
 @login_required
 def home(request):
-    return render(request, 'home.html')
+    profiles = Profile.objects.all()
+    return render(request, 'home.html',{'profiles': profiles})
 
 def contact(request):
     return render(request, 'contact.html')
@@ -53,15 +59,19 @@ def button(request):
 
 @login_required
 def add_profile(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+
+
     if request.method == 'POST':
-        if Profile.objects.filter(user=request.user).exists():
-            return redirect('view_profile')
-        profile, created = Profile.objects.get_or_create(user=request.user)
-        profile.skills = request.POST.get('skills')
-        profile.about = request.POST.get('about')
+        if request.POST.get('skills'):
+         profile.skills = request.POST.get('skills')
+        if request.POST.get('about'):
+         profile.about = request.POST.get('about')
+        if request.FILES.get('profile_picture'):
+            profile.profile_picture = request.FILES.get('profile_picture')
         profile.save()
         return redirect('view_profile')
-    return render(request, 'profile.html')
+    return render(request, 'profile.html', {'profile': profile})
 
 def add_project(request):
     if request.method == 'POST':
@@ -81,7 +91,7 @@ def add_project(request):
                 stack=stacks[i],
                 photo=photos[i])
        
-        return redirect('view_profile')
+        return HttpResponse("Project saved")
     return render(request, 'profile.html') 
 
 @login_required
@@ -102,7 +112,7 @@ def guest(request):
 
 def manager_view(request):
     if not request.user.is_superuser:
-        return HttpResponse("You are not the manager")
+        return HttpResponse("You are not manager")
     users_with_profiles = User.objects.filter(profile__isnull=False)
     users_without_profiles = User.objects.filter(profile__isnull=True)
     users = list(users_with_profiles) + list(users_without_profiles)
@@ -111,6 +121,43 @@ def manager_view(request):
 def delete_user(request, user_id):
     User.objects.get(id=user_id).delete()
     return redirect('manager_view')
+def profile_detail(request, user_id):
+    profile = Profile.objects.get(user__id=user_id)
+    projects = profile.project_set.all()
+    return render(request, 'profile_detail.html', {'profile': profile, 'projects': projects})
+def change_password(request):
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if not request.user.check_password(current_password):
+            messages.error(request, 'Wrong password.')
+        elif new_password == current_password:
+            messages.error(request, 'Password can not be the same as old')
+        elif new_password != confirm_password:
+            messages.error(request, 'New passwords are not same.')
+       
+        elif len(new_password) < 6:
+            messages.error(request, 'Password should be atleast 6 numbers long')
+        elif len(new_password) > 12:
+             messages.error(request, 'Password should not be longer than 12 characters')
+        elif not any(char.isdigit() for char in new_password):
+              messages.error(request, 'Password must have at least one number')
+        else:
+            request.user.set_password(new_password)
+            request.user.save()
+            update_session_auth_hash(request, request.user)
+            messages.success(request, 'Password changed successfully.') 
+            return redirect('home-page')
+           
+            
+    return render(request, 'new_password.html')
+
+
+
+
+
 
 
 

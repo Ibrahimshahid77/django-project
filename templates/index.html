@@ -13,6 +13,16 @@
 <body>
     <div class="container mt-5 form-container">
     <h2 class="mb-4">Signup</h2>
+
+    {% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
     
     <form method="POST" action="/signup/">
       {% csrf_token %}
@@ -40,8 +50,6 @@
       <a href="{% url 'login' %}" class="btn btn-danger">Already have an account</a>
     </form>
 
-    <a href="{% url 'guestpage' %}" class="btn btn-secondary  mt-3 me-3"> View as Guest</a>
-    <a href="{% url 'manager_view' %}" class="btn btn-danger mt-3">Manager</a>
 
 
   </div>
