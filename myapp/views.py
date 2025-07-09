@@ -6,7 +6,7 @@ from myapp.models import User, Profile, Project
 from django.contrib.auth import authenticate, login as auth_login,logout
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
@@ -154,7 +154,17 @@ def change_password(request):
             
     return render(request, 'new_password.html')
 
+def follow_user(request, user_id):
+    t_profile = get_object_or_404(Profile, user__id=user_id)
+    c_user = request.user
 
+    if c_user != t_profile.user:
+        if c_user in t_profile.followers.all():
+            t_profile.followers.remove(c_user)  
+        else:
+            t_profile.followers.add(c_user)  
+
+    return redirect('home-page')  
 
 
 

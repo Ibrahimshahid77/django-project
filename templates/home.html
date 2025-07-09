@@ -77,6 +77,14 @@
           {% endif %}
          <a href="{% url 'profile_detail' profile.user.id %}" class="stretched-link"></a>
         </div>
+        {% if request.user != profile.user %}
+  {% if request.user in profile.followers.all %}
+    <a href="{% url 'follow' profile.user.id %}" class="btn btn-outline-danger btn-sm mt-2">Unfollow</a>
+  {% else %}
+    <a href="{% url 'follow' profile.user.id %}" class="btn btn-outline-success btn-sm mt-2">Follow</a>
+  {% endif %}
+{% endif %}
+
       </div>
 
 

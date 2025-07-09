@@ -21,15 +21,13 @@ latest_users = User.objects.order_by('date_joined')
 for user in latest_users:
     print(user.username, user.date_joined)
 
-user_id = "4"
-try:
-    user = User.objects.get(id=int(user_id)) 
-    print(user.username)
-except User.DoesNotExist:
-    print("User not found.")
+
+User.objects.get(username = 'retro')
+print(user.id)
+
 
 is_active = str(User.objects.get(username="ibrahim").is_active)
 print("USER ACTIVE:", user.is_active, )
-
-
+email = User.objects.filter(id=4).values('email')
+print(email)
 

@@ -8,6 +8,7 @@ class Profile(models.Model):
     about = models.TextField(default='')
     skills = models.CharField(max_length=500, default='')
     profile_picture = models.ImageField(upload_to='profile_pics/')
+    followers = models.ManyToManyField(User, related_name='following', blank=True) 
 
 class Project(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)

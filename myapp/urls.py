@@ -15,5 +15,6 @@ urlpatterns = [
     path('manager/', views.manager_view, name='manager_view'),
     path('delete/<int:user_id>/', views.delete_user, name='delete_user'),
     path('profile/<int:user_id>/', views.profile_detail, name='profile_detail'),
-    path('password/', views.change_password, name = 'change_pass')
+    path('password/', views.change_password, name = 'change_pass'),
+    path('follow/<int:user_id>/', views.follow_user, name='follow')
 ]
