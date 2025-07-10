@@ -17,6 +17,10 @@ class Project(models.Model):
     photo = models.ImageField(upload_to='', blank=True, null = True)
     description = models.TextField(default='')
     stack = models. CharField(max_length=25,default='')
+class Comment(models.Model):
+    profile = models.ForeignKey('Profile', on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.TextField()
 
 
 

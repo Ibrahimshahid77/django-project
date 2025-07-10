@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.http import HttpResponse
-from myapp.models import User, Profile, Project
+from myapp.models import User, Profile, Project,Comment
 from django.contrib.auth import authenticate, login as auth_login,logout
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
@@ -49,8 +49,13 @@ def logout_view(request):
     return redirect('/login/')
 @login_required
 def home(request):
-    profiles = Profile.objects.all()
-    return render(request, 'home.html',{'profiles': profiles})
+     skill_search = request.GET.get('skill')
+     if skill_search:
+        profiles = Profile.objects.filter(skills__icontains=skill_search)
+     else: 
+      profiles = Profile.objects.all()
+
+     return render(request, 'home.html',{'profiles': profiles})
 
 def contact(request):
     return render(request, 'contact.html')
@@ -60,8 +65,6 @@ def button(request):
 @login_required
 def add_profile(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
-
-
     if request.method == 'POST':
         if request.POST.get('skills'):
          profile.skills = request.POST.get('skills')
@@ -69,7 +72,7 @@ def add_profile(request):
          profile.about = request.POST.get('about')
         if request.FILES.get('profile_picture'):
             profile.profile_picture = request.FILES.get('profile_picture')
-        profile.save()
+        profile.save()                                                                               
         return redirect('view_profile')
     return render(request, 'profile.html', {'profile': profile})
 
@@ -130,14 +133,12 @@ def change_password(request):
         current_password = request.POST.get('current_password')
         new_password = request.POST.get('new_password')
         confirm_password = request.POST.get('confirm_password')
-
         if not request.user.check_password(current_password):
             messages.error(request, 'Wrong password.')
         elif new_password == current_password:
             messages.error(request, 'Password can not be the same as old')
         elif new_password != confirm_password:
             messages.error(request, 'New passwords are not same.')
-       
         elif len(new_password) < 6:
             messages.error(request, 'Password should be atleast 6 numbers long')
         elif len(new_password) > 12:
@@ -163,29 +164,23 @@ def follow_user(request, user_id):
             t_profile.followers.remove(c_user)  
         else:
             t_profile.followers.add(c_user)  
-
-    return redirect('home-page')  
-
-
-
-
-
-
-         
+    return redirect('home-page')   
  
+def comment(request, user_id):
+    if request.method == 'POST':
+        profile = Profile.objects.get(user__id=user_id)
+        comment_text = request.POST.get('comment')
+        if comment_text:
+           Comment.objects.create(profile=profile, user=request.user, comment=comment_text)
+    return redirect('profile_detail', user_id=user_id)
 
 
 
 
 
-        
 
 
 
 
 
 
-
-
-
-    
