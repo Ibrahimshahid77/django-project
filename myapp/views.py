@@ -167,11 +167,15 @@ def follow_user(request, user_id):
     return redirect('home-page')   
  
 def comment(request, user_id):
+    print("COMMENT VIEW HIT")
     if request.method == 'POST':
         profile = Profile.objects.get(user__id=user_id)
         comment_text = request.POST.get('comment')
         if comment_text:
            Comment.objects.create(profile=profile, user=request.user, comment=comment_text)
+
+        print("User:", request.user)
+        print("Comment Text:", comment_text)
     return redirect('profile_detail', user_id=user_id)
 
 
