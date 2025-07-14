@@ -6,11 +6,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myproject.settings')
 django.setup()
 User = get_user_model()
 user = User.objects.get(username='retro')
-user.is_superuser = True
+user.is_superuser = False
 user.save()
 print(f"{user.username} is now a superuser.")
 user = User.objects.get(username='ibrahim777')
-user.is_superuser = False
+user.is_superuser = True
 user.save()                                 
 print(f"{user.username} is no longer a superuser.")
 #for user in User.objects.values():

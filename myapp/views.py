@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from myapp.models import User, Profile, Project,Comment
 from django.contrib.auth import authenticate, login as auth_login,logout
 from django.core.validators import validate_email
@@ -10,6 +10,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
+from django.views.decorators.csrf import csrf_exempt
 
 def signup(request):
     if request.method == 'POST':
@@ -155,17 +156,23 @@ def change_password(request):
             
     return render(request, 'new_password.html')
 
-def follow_user(request, user_id):
-    t_profile = get_object_or_404(Profile, user__id=user_id)
-    c_user = request.user
+@csrf_exempt
+@login_required
+def follow_api(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        profile = Profile.objects.get(user__id=user_id)
+    
 
-    if c_user != t_profile.user:
-        if c_user in t_profile.followers.all():
-            t_profile.followers.remove(c_user)  
+        if request.user in profile.followers.all():
+            profile.followers.remove(request.user)
+            return JsonResponse({'status': 'unfollowed'})
         else:
-            t_profile.followers.add(c_user)  
-    return redirect('home-page')   
+            profile.followers.add(request.user)
+            return JsonResponse({'status': 'followed'})
+    return JsonResponse({'error': 'Invalid method'} )
  
+
 def comment(request, user_id):
     print("COMMENT VIEW HIT")
     if request.method == 'POST':
@@ -176,8 +183,7 @@ def comment(request, user_id):
 
         print("User:", request.user)
         print("Comment Text:", comment_text)
-    return redirect('profile_detail', user_id=user_id)
-
+    return redirect('profile_detail', user_id=user_id)   
 
 
 
