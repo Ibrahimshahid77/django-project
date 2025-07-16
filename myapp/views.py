@@ -1,4 +1,4 @@
-from django.shortcuts import render
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.http import HttpResponse, JsonResponse
@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.views.decorators.csrf import csrf_exempt
+from urllib.request import urlopen
 
 def signup(request):
     if request.method == 'POST':
@@ -184,6 +185,42 @@ def comment(request, user_id):
         print("User:", request.user)
         print("Comment Text:", comment_text)
     return redirect('profile_detail', user_id=user_id)   
+def get_books():
+    url = "https://books.toscrape.com/"
+    html = urlopen(url).read().decode()
+
+    books = []
+    blocks = html.split('<article class="product_pod">')[5:13]
+    for block in blocks:
+     
+        try:
+            title = block.split('title="')[1].split('"')[0]
+        except:
+            title = "No Title"
+        try:
+            img_url = block.split('<img src="')[1].split('"')[0]
+            img_url = "https://books.toscrape.com/" + img_url.replace('../', '')
+        except:
+            img_url = ""
+        try:
+            price = block.split('<p class="price_color">')[1].split('</p>')[0]
+        except:
+            price = "IDK"
+        author = "Unknown "
+        description = "A thrilling book"
+
+        books.append({
+            'title': title,
+            'image': img_url,
+            'price': price,
+            'author': author,
+            'description': description})
+    return books
+
+def books_page(request):
+    books = get_books()
+    return render(request, 'books.html', {'books': books})
+
 
 
 

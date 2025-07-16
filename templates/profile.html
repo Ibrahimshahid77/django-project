@@ -15,24 +15,24 @@
       <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         
-        <div style="margin-bottom: 20px;padding-left: 20px;  border: 1px solid #ccc ;">
+        <div style="margin-bottom: 20px;padding-left: 20px;">
           <label style="font-weight: bold;">Name</label>
-          <input type="text" value="{{ request.user.username }}" disabled class="form-control" style="height: 45px; border-radius: 10px;">
+          <input type="text" value="{{ request.user.username }}" disabled class="form-control" style="width: 100%; height: 50px; font-size: 16px; border-radius: 25px; padding-left: 20px; border: 1px solid #adaaaa;">
         </div>
 
-        <div style="margin-bottom: 20px;padding-left: 20px; border: 1px solid #ccc;">
+        <div style="margin-bottom: 20px;padding-left: 20px;">
           <label style="font-weight: bold;">Email</label>
-          <input type="email" value="{{ request.user.email }}" disabled class="form-control" style="height: 45px; border-radius: 10px;">
+          <input type="email" value="{{ request.user.email }}" disabled class="form-control" style="width: 100%; height: 50px; font-size: 16px; border-radius: 25px; padding-left: 20px; border: 1px solid #bfbfbf;">
         </div>
 
-        <div style="margin-bottom: 20px;padding-left: 20px; border: 1px solid #ccc;">
+        <div style="margin-bottom: 20px;padding-left: 20px;">
           <label style="font-weight: bold;">Skills</label>
-          <input type="text" name="skills" class="form-control" style="height: 45px; border-radius: 10px;">
+          <input type="text" name="skills" class="form-control"  style="width: 100%; height: 50px; font-size: 16px; border-radius: 25px; padding-left: 20px; border: 1px solid #b1abab;">
         </div>
 
-        <div style="margin-bottom: 20px;padding-left: 20px; border: 1px solid #ccc;">
+        <div style="margin-bottom: 20px;padding-left: 20px; ">
           <label style="font-weight: bold;">About</label>
-          <textarea name="about" class="form-control" rows="4" style="border-radius: 10px;"></textarea>
+          <textarea name="about" class="form-control" rows="4"  style="width: 100%; height: 50px; font-size: 16px; border-radius: 25px; padding-left: 20px; border: 1px solid #bbb7b7;"></textarea>
         </div>
 
         <div style="margin-bottom: 20px;padding: 20px; border: 1px solid #ccc;">

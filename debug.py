@@ -21,7 +21,6 @@ latest_users = User.objects.order_by('date_joined')
 for user in latest_users:
     print(user.username, user.date_joined)
 
-
 User.objects.get(username = 'retro')
 print(user.id)
 

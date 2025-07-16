@@ -9,35 +9,26 @@
   </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark " style="background-color: #1f2a40;">
-  <div class="container-fluid d-flex justify-content-between align-items-center">
-  <div class="d-flex align-items-center">
-    <a class="navbar-brand me-3" href="#">Home</a>
-    <form class="d-flex" method="GET" action="{% url 'home-page' %}">
-      <input class="form-control me-2" type="search" name="skill" placeholder="Search">
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: #0a192f;">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold fs-4" href="#" style="letter-spacing: 1px;">PORTFOREO</a>
+    <form class="d-flex me-auto ms-4" method="GET" action="{% url 'home-page' %}">
+      <input class="form-control me-2 border-0 shadow-sm" type="search" name="skill" placeholder="Search by skill" style="min-width: 200px;">
       <button class="btn btn-outline-light" type="submit">Search</button>
-        {% if request.GET.skill %}
-    <a href="{% url 'home-page' %}" class="btn btn-sm btn-secondary ms-3 p-2">Clear</a>
-  {% endif %}
-</form>
-  </div>
-  <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-    <ul class="navbar-nav">
+      {% if request.GET.skill %}
+        <a href="{% url 'home-page' %}" class="btn btn-sm btn-light ms-2">Clear</a>
+      {% endif %}
+    </form>
+    <ul class="navbar-nav gap-2">
+      <li class="nav-item"><a class="nav-link" href="{% url 'add_profile' %}">Add Profile</a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'view_profile' %}">View Profile</a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'change_pass' %}">Change Password</a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'books' %}">Books</a></li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'change_pass' %}">Change Password</a>
+        <button type="button" class="btn btn-danger btn-sm ms-2 mt-1 px-3" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</button>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'view_profile' %}">View Profile</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'add_profile' %}">Add Profile</a>
-      </li>
-      <li class="nav-item">
-        <button type="button" class="btn btn-danger ms-3" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</button>
-     </li>
     </ul>
-  </div>  
-</div>
+  </div>
 </nav>
 
 <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
@@ -59,7 +50,7 @@
 </div>
 
 <div class="container text-center mt-5">
-  <h1>PROFILES PAGE</h1>
+  <h1>TALENTED USERS</h1>
   <p class="lead">Here you can see all the user's profiles.</p>
 </div>
 <hr>
@@ -83,10 +74,12 @@
           </div>
           <div class="card-body text-white" style="background-color: #222e46;">
             <h5 class="card-title mb-1 text-capitalize">{{ profile.user.username }}</h5>
-            <p class="card-text mb-1"><strong>Skills:</strong> {{ profile.skills }}</p>
-            <p class="small">{{ profile.about }}</p>
-            <p class="mb-1"><strong> {{ profile.followers.count }} Follower{{ profile.followers.count|pluralize:"s" }}</strong></p>
-            <p class="mb-1">{{ profile.comments.count }} Comment{{ profile.comments.count|pluralize:"s" }}</p>
+            <p class="card-text mb-1"><strong> Skills:</strong> {{ profile.skills }}</p>
+            <p class="small">📝{{ profile.about|slice:":50" }}{% if profile.about|length > 50 %}...{% endif %}</p>
+            <div class="d-flex justify-content-between small">
+            <span>👥 {{ profile.followers.count }} Follower{{ profile.followers.count|pluralize:"s" }}</span>
+            <span>💬 {{ profile.comments.count }} Comment{{ profile.comments.count|pluralize:"s" }}</span>
+          </div>
             <a href="{% url 'profile_detail' profile.user.id %}" class="stretched-link"></a>
           </div>
           </div>

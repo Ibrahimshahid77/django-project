@@ -17,7 +17,8 @@ urlpatterns = [
     path('profile/<int:user_id>/', views.profile_detail, name='profile_detail'),
     path('password/', views.change_password, name = 'change_pass'),
     path('api/follow/', views.follow_api, name='follow_api'),
-    path('profile/<int:user_id>/comment/', views.comment, name='comment')
+    path('profile/<int:user_id>/comment/', views.comment, name='comment'),
+    path('books/', views.books_page, name='books'),
 
 ]
 
